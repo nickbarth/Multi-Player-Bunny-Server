@@ -1,0 +1,65 @@
+<html>
+<body style="background: #000">
+<script src="/socket.io/socket.io.js"></script>
+<script src="/pixi.js"></script>
+<script>
+  window.onkeydown = function (e) {
+    if (e.keyCode === 37)
+      socket.emit('player:move', 'LEFT');
+    if (e.keyCode === 38)
+      socket.emit('player:jump');
+    if (e.keyCode === 39)
+      socket.emit('player:move', 'RIGHT');
+  }
+
+  window.onkeyup = function (e) {
+    socket.emit('player:move', '');
+  }
+
+  var socket = io.connect('http://localhost');
+
+  socket.on('game:state', function (data) {
+    window.gameUpdated = true;
+    window.gameData = data;
+  });
+
+
+  var canvas = new PIXI.WebGLRenderer(500, 300);
+  var stage = new PIXI.Stage(0xFFFFFF);
+  var texture = PIXI.Texture.fromImage('/bunny.png');
+
+
+  document.body.appendChild(canvas.view);
+
+  var gamePlayers = {};
+
+  function renderPlayers (players) {
+    players.forEach(function (player) {
+      if (!gamePlayers[player.id]) {
+        gamePlayers[player.id] = new PIXI.Sprite(texture);
+
+        gamePlayers[player.id].anchor.x = 0.5;
+        gamePlayers[player.id].anchor.y = 1;
+
+        stage.addChild(gamePlayers[player.id]);
+      }
+
+      gamePlayers[player.id].position.x = player.x;
+      gamePlayers[player.id].position.y = 300 - player.y;
+    });
+  }
+
+  function animate () {
+    requestAnimFrame(animate);
+    if (!window.gameUpdated) return;
+
+    renderPlayers(window.gameData.playerState);
+    canvas.render(stage);
+
+    window.gameUpdated = false;
+  }
+
+  requestAnimFrame(animate);
+</script>
+</body>
+</html>
