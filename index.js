@@ -25,7 +25,7 @@ function app (req, res) {
 Game = function () {
   this.players = [];
   this.bullets = [];
-  this.world = new p2.World({gravity: [0,-9.82]});
+  this.world = new p2.World({gravity: [0,-100]});
 }
 
 Game.prototype.init = function () {
@@ -53,7 +53,7 @@ Game.prototype.killPlayer = function (player) {
 
 Game.prototype.addBullet = function (bullet) {
   var bullet = new Bullet(step.bullet);
-  self.bullets.push(bullets);
+  this.bullets.push(bullets);
   /* Come up With Physics */
 }
 
@@ -79,7 +79,7 @@ Game.prototype.step = function () {
     if (step.killed) self.bullets.splice(bullet.index, 1);
   });
 
-  return {'playerState': playerState, 'bulletState': bulletState};
+  return {'timestamp': Date.now(), 'playerState': playerState, 'bulletState': bulletState};
 }
 
 Player = function (x, y) {
