@@ -24,7 +24,7 @@
   });
 
 
-  var canvas = new PIXI.WebGLRenderer(500, 300);
+  var canvas = new PIXI.autoDetectRenderer(500, 300);
   var stage = new PIXI.Stage(0xFFFFFF);
   var texture = PIXI.Texture.fromImage('/bunny.png');
 

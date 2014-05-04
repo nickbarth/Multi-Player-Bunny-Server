@@ -123,7 +123,7 @@ Player.prototype.step = function () {
     this.futureJump = false;
     this.body.velocity[1] = 100;
   } else {
-    if (this.body.position[1] < 1) {
+    if (this.body.position[1] < 18) {
       this.isJumping = false;
     }
   }
