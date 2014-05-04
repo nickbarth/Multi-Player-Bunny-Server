@@ -24,7 +24,7 @@
   });
 
 
-  var canvas = new PIXI.autoDetectRenderer(500, 300);
+  var canvas = new PIXI.autoDetectRenderer(500, 500);
   var stage = new PIXI.Stage(0xFFFFFF);
   var texture = PIXI.Texture.fromImage('/bunny.png');
 
@@ -45,7 +45,7 @@
       }
 
       gamePlayers[player.id].position.x = player.x;
-      gamePlayers[player.id].position.y = 300 - player.y;
+      gamePlayers[player.id].position.y = 450 - player.y;
     });
 
     // Check for Dead Sprites

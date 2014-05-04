@@ -24,8 +24,7 @@ function app (req, res) {
 
 Game = function () {
   this.players = [];
-  this.bullets = [];
-  this.world = new p2.World({gravity: [0,-100]});
+  this.world = new p2.World({gravity: [0, -20]});
 }
 
 Game.prototype.init = function () {
@@ -44,38 +43,21 @@ Game.prototype.addPlayer = function (player) {
 }
 
 Game.prototype.killPlayer = function (player) {
+  this.world.addBody(player.body);
   this.players.splice(player.index, 1);
-}
-
-Game.prototype.addBullet = function (bullet) {
-  var bullet = new Bullet(step.bullet);
-  this.bullets.push(bullets);
-  /* Come up With Physics */
 }
 
 Game.prototype.step = function () {
   var self;
 
-  this.world.step(1/60);
+  this.world.step(1/20);
 
   var playerState = this.players.map(function (player) {
     var step = player.step();
-
-    if (step.shotFired)
-      this.addBullet(step.bullet);
-    if (step.killed)
-      this.killPlayer(player);
-
     return step;
   });
 
-  var bulletState = this.bullets.map(function (bullet) {
-    var step = bullet.step();
-
-    if (step.killed) self.bullets.splice(bullet.index, 1);
-  });
-
-  return {'timestamp': Date.now(), 'playerState': playerState, 'bulletState': bulletState};
+  return {'timestamp': Date.now(), 'playerState': playerState };
 }
 
 Player = function (x, y) {
@@ -90,7 +72,7 @@ Player = function (x, y) {
 
   // Physics Controlled Variables
   this.shape = new p2.Rectangle(26.0, 35.0, 0, 0, 0);
-  this.body = new p2.Body({ mass: 10, position:[x, y] });
+  this.body = new p2.Body({ mass: 100, position:[x, y] });
   this.body.addShape(this.shape);
 }
 
@@ -111,7 +93,7 @@ Player.prototype.step = function () {
   // Jump Updates
   if (this.futureJump) {
     this.futureJump = false;
-    this.body.velocity[1] = 100;
+    this.body.velocity[1] = 75;
   } else {
     if (this.body.position[1] < 18) {
       this.isJumping = false;
@@ -139,7 +121,7 @@ game.init();
 io.sockets.on('connection', function (socket) {
   socket.broadcast.emit('user:new');
 
-  var player = new Player(50, 50);
+  var player = new Player(100, 100);
 
   connections.push(socket.id);
 
@@ -179,4 +161,4 @@ function gameLoop () {
 }
 
 gameLoop();
-server.listen(8000);
+server.listen(5000);
