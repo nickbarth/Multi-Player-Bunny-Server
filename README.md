@@ -7,4 +7,4 @@ A Multi Player NodeJS Game Server integrated with a Physics Engine. [Try it on H
 **Todo**: Latency Compensation... Someday...
 
 ### License
-WTFPL &copy; 2012 Nick Barth
+WTFPL &copy; 2014 Nick Barth
