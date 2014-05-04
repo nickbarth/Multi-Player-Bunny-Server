@@ -29,11 +29,11 @@ Game = function () {
 }
 
 Game.prototype.init = function () {
-  this.world.islandSplit = true;
-  this.world.enableIslandSleeping = true;
-  this.world.solver.iterations = 20;
+  //this.world.islandSplit = true;
+  //this.world.enableIslandSleeping = true;
+  //this.world.solver.iterations = 20;
+  //this.world.setGlobalStiffness(1e4);
   this.world.solver.tolerance = 0.001;
-  this.world.setGlobalStiffness(1e4);
 
   var groundShape = new p2.Plane();
   var ground = new p2.Body({position:[0,0]});
@@ -44,7 +44,7 @@ Game.prototype.init = function () {
 
 Game.prototype.addPlayer = function (player) {
   this.players.push(player);
-  this.world.addBody(player.body, player.body);
+  this.world.addBody(player.body);
 }
 
 Game.prototype.killPlayer = function (player) {
@@ -95,7 +95,7 @@ Player = function (x, y) {
   this.isShooting = false;
 
   // Physics Controlled Variables
-  this.shape = new p2.Rectangle(2.0, 2.0);
+  this.shape = new p2.Rectangle(26.0, 35.0, 0, 0, 0);
   this.body = new p2.Body({ mass: 10, position:[x, y] });
   this.body.addShape(this.shape);
 }
