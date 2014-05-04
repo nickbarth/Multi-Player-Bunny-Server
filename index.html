@@ -49,7 +49,7 @@
     });
 
     // Check for Dead Sprites
-    if (gamePlayers) Object.keys(gamePlayers).forEach(function (id) {
+    Object.keys(gamePlayers).forEach(function (id) {
       var livePlayer = players.filter(function (p) { return p.id === id });
       if (livePlayer.length) return;
 
