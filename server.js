@@ -43,7 +43,7 @@ Game.prototype.addPlayer = function (player) {
 }
 
 Game.prototype.killPlayer = function (player) {
-  this.world.addBody(player.body);
+  this.world.removeBody(player.body);
   this.players.splice(player.index, 1);
 }
 
