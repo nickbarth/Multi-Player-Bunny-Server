@@ -43,8 +43,8 @@ Game.prototype.addPlayer = function (player) {
 }
 
 Game.prototype.killPlayer = function (player) {
+  this.players.splice(this.players.indexOf(player), 1);
   this.world.removeBody(player.body);
-  this.players.splice(player.index, 1);
 }
 
 Game.prototype.step = function () {
@@ -124,17 +124,14 @@ io.sockets.on('connection', function (socket) {
   var player = new Player(100, 100);
 
   connections.push(socket.id);
-
-  player.index = connections.indexOf(socket.id);
   player.id = socket.id;
-
   game.addPlayer(player);
 
   socket.on('player:move', player.move.bind(player));
   socket.on('player:jump', player.jump.bind(player));
 
   socket.on('disconnect', function() {
-    connections.splice(player.index, 1);
+    connections.splice(connections.indexOf(socket), 1);
     game.killPlayer(player);
   });
 });
