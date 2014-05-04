@@ -29,10 +29,6 @@ Game = function () {
 }
 
 Game.prototype.init = function () {
-  //this.world.islandSplit = true;
-  //this.world.enableIslandSleeping = true;
-  //this.world.solver.iterations = 20;
-  //this.world.setGlobalStiffness(1e4);
   this.world.solver.tolerance = 0.001;
 
   var groundShape = new p2.Plane();
@@ -91,8 +87,6 @@ Player = function (x, y) {
   this.futureMove = '';
   this.futureJump = false;
   this.isJumping = true;
-  this.futureShoot = false;
-  this.isShooting = false;
 
   // Physics Controlled Variables
   this.shape = new p2.Rectangle(26.0, 35.0, 0, 0, 0);
@@ -109,10 +103,6 @@ Player.prototype.jump = function () {
     this.futureJump = true;
     this.isJumping = true;
   }
-}
-
-Player.prototype.shoot = function () {
-  if (!this.isShooting) this.futureShoot = true;
 }
 
 Player.prototype.step = function () {
@@ -159,7 +149,6 @@ io.sockets.on('connection', function (socket) {
   game.addPlayer(player);
 
   socket.on('player:move', player.move.bind(player));
-  socket.on('player:shoot', player.shoot.bind(player));
   socket.on('player:jump', player.jump.bind(player));
 
   socket.on('disconnect', function() {
