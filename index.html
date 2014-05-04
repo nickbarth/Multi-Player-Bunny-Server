@@ -3,72 +3,82 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/pixi.js"></script>
 <script>
-  window.onkeydown = function (e) {
-    if (e.keyCode === 37)
-      socket.emit('player:move', 'LEFT');
-    if (e.keyCode === 38)
-      socket.emit('player:jump');
-    if (e.keyCode === 39)
-      socket.emit('player:move', 'RIGHT');
+  var socket = io.connect();
+
+  Game = function () {
+    this.players = {};
+
+    this.state = {};
+    this.updated = false;
+
+    this.canvas = new PIXI.autoDetectRenderer(500, 500);
+    this.stage = new PIXI.Stage(0xFFFFFF);
+    this.texture = PIXI.Texture.fromImage('/bunny.png');
+
+    window.onkeydown = this.input.bind(this);
+    window.onkeyup = this.endInput.bind(this);
+
+    socket.on('game:state', this.update.bind(this));
+    window.requestAnimFrame(this.loop.bind(this));
+
+    document.body.appendChild(this.canvas.view);
   }
 
-  window.onkeyup = function (e) {
+  Game.prototype.input = function (e) {
+    if (e.keyCode === 37) socket.emit('player:move', 'LEFT');
+    if (e.keyCode === 38) socket.emit('player:jump');
+    if (e.keyCode === 39) socket.emit('player:move', 'RIGHT');
+  }
+
+  Game.prototype.endInput = function (e) {
     socket.emit('player:move', '');
   }
 
-  var socket = io.connect();
+  Game.prototype.update = function (state) {
+    this.updated = true;
+    this.state = state;
+  }
 
-  socket.on('game:state', function (data) {
-    window.gameUpdated = true;
-    window.gameData = data;
-  });
+  Game.prototype.renderPlayers = function () {
+    var self = this;
 
+    this.state.players.forEach(function (player) {
+      if (!self.players[player.id]) {
+        // Add New Player
+        self.players[player.id] = new PIXI.Sprite(self.texture);
 
-  var canvas = new PIXI.autoDetectRenderer(500, 500);
-  var stage = new PIXI.Stage(0xFFFFFF);
-  var texture = PIXI.Texture.fromImage('/bunny.png');
+        self.players[player.id].anchor.x = 0.5;
+        self.players[player.id].anchor.y = 0.5;
 
-
-  document.body.appendChild(canvas.view);
-
-  var gamePlayers = {};
-
-  function renderPlayers (players) {
-    players.forEach(function (player) {
-      if (!gamePlayers[player.id]) {
-        gamePlayers[player.id] = new PIXI.Sprite(texture);
-
-        gamePlayers[player.id].anchor.x = 0.5;
-        gamePlayers[player.id].anchor.y = 0.5;
-
-        stage.addChild(gamePlayers[player.id]);
+        self.stage.addChild(self.players[player.id]);
       }
 
-      gamePlayers[player.id].position.x = player.x;
-      gamePlayers[player.id].position.y = 450 - player.y;
+      // Update Position of Player
+      self.players[player.id].position.x = player.x;
+      self.players[player.id].position.y = 450 - player.y;
     });
 
-    // Check for Dead Sprites
-    Object.keys(gamePlayers).forEach(function (id) {
-      var livePlayer = players.filter(function (p) { return p.id === id });
+    // Clear Dead Players
+    Object.keys(this.players).forEach(function (id) {
+      var livePlayer = self.state.players.filter(function (p) { return p.id === id });
       if (livePlayer.length) return;
 
-      stage.removeChild(gamePlayers[id]);
-      delete gamePlayers[id];
-    }.bind(this));
+      self.stage.removeChild(self.players[id]);
+      delete self.players[id];
+    });
   }
 
-  function animate () {
-    requestAnimFrame(animate);
-    if (!window.gameUpdated) return;
+  Game.prototype.loop = function () {
+    requestAnimFrame(this.loop.bind(this));
+    if (!this.updated) return;
 
-    renderPlayers(window.gameData.playerState);
-    canvas.render(stage);
+    this.renderPlayers();
+    this.canvas.render(this.stage);
 
-    window.gameUpdated = false;
+    this.updated = false;
   }
 
-  requestAnimFrame(animate);
+  new Game;
 </script>
 </body>
 </html>

@@ -52,12 +52,12 @@ Game.prototype.step = function () {
 
   this.world.step(1/20);
 
-  var playerState = this.players.map(function (player) {
+  var players = this.players.map(function (player) {
     var step = player.step();
     return step;
   });
 
-  return {'timestamp': Date.now(), 'playerState': playerState };
+  return {'timestamp': Date.now(), 'players': players };
 }
 
 Player = function (x, y) {
