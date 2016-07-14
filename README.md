@@ -4,7 +4,5 @@ A Multi Player NodeJS Game Server integrated with a Physics Engine. [Try it on H
 
 ![Screenshot](https://raw.githubusercontent.com/nickbarth/MultiPlayerServer/master/screenshot.png "Screenshot")
 
-**Todo**: Latency Compensation... Someday...
-
 ### License
 WTFPL &copy; 2014 Nick Barth
